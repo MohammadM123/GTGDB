@@ -15,6 +15,9 @@ def Home():
 @app.route("/login", methods=["GET", "POST"])
 def Login():
 
+    if session.get("username"):
+        return redirect("/")
+
     # They sent us data, get the username and password
     # then check if their details are correct.
     if request.method == "POST":
@@ -30,6 +33,8 @@ def Login():
 
             # Send them back to the homepage
             return redirect("/")
+        else:
+            return render_template("login.html", error="Username or password incorrect")
 
     return render_template("login.html")
 
