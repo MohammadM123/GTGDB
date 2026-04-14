@@ -113,6 +113,21 @@ def AddGuess(user_id, date, game, score):
     return True
 
 
+def UpdateGuess(guess_id, date, game, score):
+
+    # Check if any boxes were empty
+    if date is None or game is None:
+        return False
+
+    # Get the DB and add the guess
+    db = GetDB()
+    db.execute("UPDATE Guesses SET date=?, game=?, score=? WHERE id=?",
+               (date, game, score, guess_id))
+    db.commit()
+
+    return True
+
+
 def DeleteGuess(id):
     db = GetDB()
     db.execute("DELETE FROM Guesses WHERE id=?", (id,))

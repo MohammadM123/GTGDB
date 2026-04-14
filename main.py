@@ -109,4 +109,29 @@ def Delete():
     return redirect("/")
 
 
+@app.route("/update/<guess_id>", methods=["GET", "POST"])
+def Update(guess_id):
+
+    # Check if they are logged in first
+    if not session.get('username'):
+        return redirect("/")
+
+    if not int(guess_id) in db.GetUserGuesses(session["id"]):
+        return redirect("/")
+
+    # Did they click submit?
+    if request.method == "POST":
+        date = request.form['date']
+        game = request.form['game']
+        score = request.form['score']
+
+        # Send the data to add our new guess to the db
+        db.UpdateGuess(guess_id, date, game, score)
+
+        # Send to homepage
+        return redirect("/")
+
+    return render_template("update.html")
+
+
 app.run(debug=True, port=5000)
