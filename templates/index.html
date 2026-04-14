@@ -28,11 +28,25 @@
 
   <tbody>
     {% for guess in guesses %}
-    <tr>
+    <tr class="row-wrapper">
       <td>{{ guess['date'] }}</td>
       <td>{{ guess['username'] }}</td>
       <td>{{ guess['game'] }}</td>
       <td>{{ guess['score'] }}</td>
+
+      {% if session['username'] == guess['username'] %}
+      <td class="row-actions">
+        <a href="/update/{{guess.id}}" class="action-button update-button">
+          Update
+        </a>
+        <form action="/delete" method="POST" style="display: inline">
+          <input type="hidden" name="id" value="{{ guess['id'] }}" />
+          <button class="action-button delete-button" type="submit">
+            Delete
+          </button>
+        </form>
+      </td>
+      {% endif %}
     </tr>
     {% endfor %}
   </tbody>

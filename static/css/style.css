@@ -83,6 +83,48 @@ nav a.active {
   color: white;
 }
 
+.row-wrapper {
+  position: relative;
+}
+
+td.row-actions {
+  position: absolute;
+  right: -160px; /* adjust depending on spacing */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  border: none;
+}
+
+th.action-cell {
+  padding: 0;
+}
+
+.action-button {
+  font-size: 16px;
+  padding: 8px;
+}
+
+a.action-button {
+  display: inline;
+  color: #fff;
+  text-decoration: none;
+  padding: 0;
+  height: min-content;
+  margin: 8px 0px;
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+
+.update-button {
+  background-color: royalblue;
+}
+
+.delete-button {
+  background-color: rgb(245, 100, 100);
+}
+
 input[type="text"],
 input[type="password"],
 input[type="date"],
