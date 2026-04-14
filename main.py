@@ -53,6 +53,9 @@ def Register():
         username = request.form['username']
         password = request.form['password']
 
+        if (not username) or (not password):
+            return render_template("register.html", error="Please provide a username and password")
+
         # Try and add them to the DB
         new_user = db.RegisterUser(username, password)
 
