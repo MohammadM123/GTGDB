@@ -59,6 +59,10 @@ def Register():
 @app.route("/add", methods=["GET", "POST"])
 def Add():
 
+    # Check if they are logged in first
+    if session.get('username') == None:
+        return redirect("/")
+
     # Did they click submit?
     if request.method == "POST":
         user_id = session['id']
