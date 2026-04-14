@@ -56,6 +56,9 @@ def Register():
         if (not username) or (not password):
             return render_template("register.html", error="Please provide a username and password")
 
+        if db.CheckIfUserExists(username):
+            return render_template("register.html", error="Username already in use")
+
         # Try and add them to the DB
         new_user = db.RegisterUser(username, password)
 

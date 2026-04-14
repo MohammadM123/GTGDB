@@ -41,6 +41,17 @@ def CheckLogin(username, password):
     return None
 
 
+def CheckIfUserExists(username):
+    """Return True if user with given username exists, else return False"""
+    db = GetDB()
+    user = db.execute("SELECT * FROM Users WHERE username=?",
+                      (username,)).fetchone()
+    if user:
+        return True
+    else:
+        return False
+
+
 def RegisterUser(username, password):
 
     # Check if they gave us a username and password
