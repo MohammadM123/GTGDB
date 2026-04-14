@@ -97,4 +97,16 @@ def Add():
     return render_template("add.html")
 
 
+@app.route("/delete", methods=["POST"])
+def Delete():
+
+    guess_id = request.form["id"]
+
+    if not int(guess_id) in db.GetUserGuesses(session["id"]):
+        return redirect("/")
+
+    db.DeleteGuess(guess_id)
+    return redirect("/")
+
+
 app.run(debug=True, port=5000)
