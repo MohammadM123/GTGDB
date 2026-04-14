@@ -125,13 +125,15 @@ def Update(guess_id):
         game = request.form['game']
         score = request.form['score']
 
+        print("here")
+
         # Send the data to add our new guess to the db
         db.UpdateGuess(guess_id, date, game, score)
 
         # Send to homepage
         return redirect("/")
 
-    return render_template("update.html")
+    return render_template("update.html", guess_id=guess_id)
 
 
 app.run(debug=True, port=5000)

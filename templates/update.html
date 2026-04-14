@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <h2>Update guess</h2>
-<form action="/update" method="post">
+<form action="/update/{{guess_id}}" method="post">
   <label>Date: </label>
   <input type="date" name="date" id="date" />
   <label>Game: </label>
