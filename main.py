@@ -1,9 +1,11 @@
 
 from flask import Flask, render_template, request, session, redirect
 import db
+import secrets
 
 app = Flask(__name__)
 app.secret_key = "gtg"
+app.config["PEPPER"] = secrets.token_hex(32)
 
 
 @app.route("/")

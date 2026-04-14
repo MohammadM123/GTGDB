@@ -1,5 +1,6 @@
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
 
 
 def GetDB():
@@ -33,7 +34,10 @@ def CheckLogin(username, password):
     # Do they exist?
     if user is not None:
         # OK they exist, is their password correct
-        if check_password_hash(user['password'], password):
+        pepper = current_app.config["PEPPER"]
+        salted_password = password + pepper
+
+        if check_password_hash(user['password'], salted_password):
             # They got it right, return their details
             return user
 
@@ -60,7 +64,14 @@ def RegisterUser(username, password):
 
     # Attempt to add them to the database
     db = GetDB()
-    hash = generate_password_hash(password)
+    pepper = current_app.config["PEPPER"]
+    salted_password = password + pepper
+
+    hash = generate_password_hash(
+        salted_password,
+        method="pbkdf2:sha256",
+        salt_length=16
+    )
     db.execute("INSERT INTO Users(username, password) VALUES(?, ?)",
                (username, hash,))
     db.commit()
