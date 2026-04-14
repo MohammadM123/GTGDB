@@ -49,7 +49,15 @@ def Register():
         password = request.form['password']
 
         # Try and add them to the DB
-        if db.RegisterUser(username, password):
+        new_user = db.RegisterUser(username, password)
+
+        # Try and add them to the DB
+        if new_user:
+
+            print(new_user)
+            # Update for auto login
+            session['id'] = new_user['id']
+            session['username'] = username
             # Success! Let's go to the homepage
             return redirect("/")
 

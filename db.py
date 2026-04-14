@@ -54,7 +54,11 @@ def RegisterUser(username, password):
                (username, hash,))
     db.commit()
 
-    return True
+    user = db.execute("SELECT * FROM Users WHERE username=?",
+                      (username,)).fetchone()
+
+    # If registration is successful, send back user object for auto login
+    return {"id": user["id"], "username": user["username"]}
 
 
 def AddGuess(user_id, date, game, score):
