@@ -23,6 +23,21 @@ def GetAllGuesses():
     return guesses
 
 
+def GetUserGuesses(user_id):
+    # Return list of guess_id of user guesses
+
+    db = GetDB()
+
+    guesses = db.execute("SELECT id FROM Guesses WHERE user_id=?",
+                         (user_id,)).fetchall()
+
+    id_list = []
+
+    for guess in guesses:
+        id_list.append(guess["id"])
+    return id_list
+
+
 def CheckLogin(username, password):
 
     db = GetDB()
@@ -96,3 +111,9 @@ def AddGuess(user_id, date, game, score):
     db.commit()
 
     return True
+
+
+def DeleteGuess(id):
+    db = GetDB()
+    db.execute("DELETE FROM Guesses WHERE id=?", (id,))
+    db.commit()
