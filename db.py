@@ -1,6 +1,7 @@
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
+import time
 
 
 def GetDB():
@@ -11,20 +12,17 @@ def GetDB():
 
     return db
 
+# Helper functions
 
-def GetAllGuesses():
 
-    # Connect, query all guesses and then return the data
+def GetUserByUsername(username):
+    """Get user info from username"""
     db = GetDB()
-    guesses = db.execute("""SELECT Guesses.id, Guesses.date, Guesses.game, Guesses.score, Users.username
-                            FROM Guesses JOIN Users ON Guesses.user_id = Users.id
-                            ORDER BY date DESC""").fetchall()
-    db.close()
-    return guesses
+    return db.execute("SELECT * FROM Users WHERE username=?", (username,)).fetchone()
 
 
 def GetUserGuesses(user_id):
-    # Return list of guess_id of user guesses
+    """Return list of guess_id of user guesses"""
 
     db = GetDB()
 
@@ -36,6 +34,30 @@ def GetUserGuesses(user_id):
     for guess in guesses:
         id_list.append(guess["id"])
     return id_list
+
+
+def CheckIfUserExists(username):
+    """Return True if user with given username exists, else return False"""
+    db = GetDB()
+    user = db.execute("SELECT * FROM Users WHERE username=?",
+                      (username,)).fetchone()
+    if user:
+        return True
+    else:
+        return False
+
+# Main functions
+
+
+def GetAllGuesses():
+
+    # Connect, query all guesses and then return the data
+    db = GetDB()
+    guesses = db.execute("""SELECT Guesses.id, Guesses.date, Guesses.game, Guesses.score, Users.username
+                            FROM Guesses JOIN Users ON Guesses.user_id = Users.id
+                            ORDER BY date DESC""").fetchall()
+    db.close()
+    return guesses
 
 
 def CheckLogin(username, password):
@@ -60,15 +82,37 @@ def CheckLogin(username, password):
     return None
 
 
-def CheckIfUserExists(username):
-    """Return True if user with given username exists, else return False"""
+def IncrementLoginAttempts(user_id):
+    """Increment failed login attempts for one user and set lock time if failed attempts >= 5"""
     db = GetDB()
-    user = db.execute("SELECT * FROM Users WHERE username=?",
-                      (username,)).fetchone()
-    if user:
-        return True
+
+    user = db.execute(
+        "SELECT failed_attempts FROM Users WHERE id=?", (user_id,)).fetchone()
+    attempts = user["failed_attempts"] + 1
+
+    if attempts >= 5:
+        lock_until = int(time.time()) + 30  # 5 minutes
+        db.execute(
+            "UPDATE Users SET failed_attempts=0, lock_until=? WHERE id=?",
+            (lock_until, user_id)
+        )
     else:
-        return False
+        db.execute(
+            "UPDATE Users SET failed_attempts=? WHERE id=?",
+            (attempts, user_id)
+        )
+
+    db.commit()
+
+
+def ResetLoginAttempts(user_id):
+    """Reset failed login attempts and lock time for one user"""
+    db = GetDB()
+    db.execute(
+        "UPDATE Users SET failed_attempts=0, lock_until=0 WHERE id=?",
+        (user_id,)
+    )
+    db.commit()
 
 
 def RegisterUser(username, password):

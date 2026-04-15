@@ -2,9 +2,12 @@
 from flask import Flask, render_template, request, session, redirect
 import db
 import secrets
+import time
 
 app = Flask(__name__)
 app.secret_key = "gtg"
+
+# Universal pepper for password security
 app.config["PEPPER"] = secrets.token_hex(32)
 
 
@@ -26,17 +29,32 @@ def Login():
         username = request.form['username']
         password = request.form['password']
 
-        # Did they provide good details
-        user = db.CheckLogin(username, password)
+        user = db.GetUserByUsername(username)
         if user:
-            # Yes! Save their username and id then
-            session['id'] = user['id']
-            session['username'] = username
+            current_time = int(time.time())
 
-            # Send them back to the homepage
-            return redirect("/")
-        else:
-            return render_template("login.html", error="Username or password incorrect")
+            # Check if user locked
+            if user["lock_until"] and current_time < user["lock_until"]:
+                return render_template("login.html", error="Too many attempts. Try again later.")
+
+            # Did they provide good details
+            valid_user = db.CheckLogin(username, password)
+
+            if valid_user:
+                # Reset failed logins
+                db.ResetLoginAttempts(user["id"])
+
+                # Save user id and username
+                session['id'] = valid_user['id']
+                session['username'] = username
+
+                # Send them back to the homepage
+                return redirect("/")
+            else:
+                # Increment failed logins
+                db.IncrementLoginAttempts(user["id"])
+
+                return render_template("login.html", error="Username or password incorrect")
 
     return render_template("login.html")
 
