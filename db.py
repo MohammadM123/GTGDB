@@ -91,7 +91,7 @@ def IncrementLoginAttempts(user_id):
     attempts = user["failed_attempts"] + 1
 
     if attempts >= 5:
-        lock_until = int(time.time()) + 30  # 5 minutes
+        lock_until = int(time.time()) + 300  # 5 minutes
         db.execute(
             "UPDATE Users SET failed_attempts=0, lock_until=? WHERE id=?",
             (lock_until, user_id)
