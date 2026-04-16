@@ -30,31 +30,36 @@ def Login():
         password = request.form['password']
 
         user = db.GetUserByUsername(username)
-        if user:
-            current_time = int(time.time())
 
-            # Check if user locked
-            if user["lock_until"] and current_time < user["lock_until"]:
-                return render_template("login.html", error="Too many attempts. Try again later.")
+        # If user does not exist, return wrong username or password
+        if not user:
+            return render_template("login.html", error="Username or password incorrect")
 
-            # Did they provide good details
-            valid_user = db.CheckLogin(username, password)
+        # If user does exist, ensure user is not locked before checking password
+        current_time = int(time.time())
 
-            if valid_user:
-                # Reset failed logins
-                db.ResetLoginAttempts(user["id"])
+        if user["lock_until"] and current_time < user["lock_until"]:
+            return render_template("login.html", error="Too many attempts. Try again later.")
 
-                # Save user id and username
-                session['id'] = valid_user['id']
-                session['username'] = username
+        # If user is not locked, check credentials
+        valid_user = db.CheckLogin(username, password)
 
-                # Send them back to the homepage
-                return redirect("/")
-            else:
-                # Increment failed logins
-                db.IncrementLoginAttempts(user["id"])
+        if valid_user:
+            # Reset failed logins
+            db.ResetLoginAttempts(user["id"])
 
-                return render_template("login.html", error="Username or password incorrect")
+            # Save user id and username
+            session['id'] = valid_user['id']
+            session['username'] = username
+
+            # Send them back to the homepage
+            return redirect("/")
+        else:
+            print("got user else")
+
+            # Increment failed logins
+            db.IncrementLoginAttempts(user["id"])
+            return render_template("login.html", error="Username or password incorrect")
 
     return render_template("login.html")
 
