@@ -193,3 +193,23 @@ button {
     padding: 40px;
   }
 }
+
+@media (max-width: 800px) {
+  .guess-table {
+    font-size: 14px;
+  }
+
+  .action-button {
+    font-family: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .guess-table {
+    font-size: 12px;
+  }
+
+  .action-button {
+    font-family: 12px;
+  }
+}

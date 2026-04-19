@@ -30,7 +30,9 @@ content %}
   <tbody>
     {% for guess in guesses %}
     <tr class="row-wrapper">
-      <td>{{ guess['date'] }}</td>
+      <td class="date-cell" data-original="{{ guess['date'] }}">
+        {{ guess['date'] }}
+      </td>
       <td>{{ guess['username'] }}</td>
       <td>{{ guess['game'] }}</td>
       <td>{{ guess['score'] }}</td>
