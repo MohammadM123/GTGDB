@@ -22,7 +22,7 @@ main {
 .banner {
   padding: 60px;
   text-align: center;
-  background: #1abc9c;
+  background: #bc661a;
   color: white;
   font-size: 3em;
 }
@@ -122,11 +122,19 @@ a.action-button {
 }
 
 .update-button {
-  background-color: royalblue;
+  background-color: #6787e7;
 }
 
 .delete-button {
-  background-color: rgb(245, 100, 100);
+  background-color: #f78383;
+}
+
+.update-button:hover {
+  background-color: #4169e1;
+}
+
+.delete-button:hover {
+  background-color: #f56464;
 }
 
 input[type="text"],
@@ -160,7 +168,7 @@ input[type="submit"]:hover {
 }
 
 button {
-  background-color: #4caf50;
+  background-color: #70bf73;
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
@@ -168,6 +176,12 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1.05em;
+
+  transition: all 100ms ease;
+}
+
+button:hover {
+  background-color: #4caf50;
 }
 
 .error-message {
