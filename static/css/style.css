@@ -72,18 +72,18 @@ nav a.active {
 }
 
 .guess-table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #f5e8dd;
 }
 
 .guess-table tr:hover {
-  background-color: #ddd;
+  background-color: #eed9c6;
 }
 
 .guess-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #1abc9c;
+  background-color: #c37531;
   color: white;
 }
 
