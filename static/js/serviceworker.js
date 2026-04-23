@@ -20,9 +20,9 @@ self.addEventListener("install", (installEvent) => {
       .open(CATALOGUE_ASSETS)
       .then((cache) => {
         console.log(cache);
-        cache.addAll(assets);
+        return cache.addAll(assets);
       })
-      .then(self.skipWaiting())
+      .then(() => self.skipWaiting())
       .catch((e) => {
         console.log(e);
       }),
@@ -36,8 +36,8 @@ self.addEventListener("activate", function (event) {
       .then((keyList) => {
         return Promise.all(
           keyList.map((key) => {
-            if (key === CATALOGUE_ASSETS) {
-              console.log("Removed old cache from", key);
+            if (key !== CATALOGUE_ASSETS) {
+              console.log("Removed old cache from ", key);
               return caches.delete(key);
             }
           }),
