@@ -1,4 +1,4 @@
-
+import html
 from flask import Flask, render_template, request, session, redirect
 import db
 import secrets
@@ -26,8 +26,8 @@ def Login():
     # They sent us data, get the username and password
     # then check if their details are correct.
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
+        username = html.escape(request.form['username'])
+        password = html.escape(request.form['password'])
 
         user = db.GetUserByUsername(username)
 
@@ -75,8 +75,8 @@ def Register():
 
     # If they click the submit button, let's register
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
+        username = html.escape(request.form['username'])
+        password = html.escape(request.form['password'])
 
         if (not username) or (not password):
             return render_template("register.html", error="Please provide a username and password")
@@ -94,6 +94,7 @@ def Register():
             # Update for auto login
             session['id'] = new_user['id']
             session['username'] = username
+
             # Success! Let's go to the homepage
             return redirect("/")
 
@@ -110,9 +111,9 @@ def Add():
     # Did they click submit?
     if request.method == "POST":
         user_id = session['id']
-        date = request.form['date']
-        game = request.form['game']
-        score = request.form['score']
+        date = html.escape(request.form['date'])
+        game = html.escape(request.form['game'])
+        score = html.escape(request.form['score'])
 
         # Send the data to add our new guess to the db
         db.AddGuess(user_id, date, game, score)
@@ -123,7 +124,7 @@ def Add():
 @app.route("/delete", methods=["POST"])
 def Delete():
 
-    guess_id = request.form["id"]
+    guess_id = html.escape(request.form["id"])
 
     if not int(guess_id) in db.GetUserGuesses(session["id"]):
         return redirect("/")
@@ -144,9 +145,9 @@ def Update(guess_id):
 
     # Did they click submit?
     if request.method == "POST":
-        date = request.form['date']
-        game = request.form['game']
-        score = request.form['score']
+        date = html.escape(request.form['date'])
+        game = html.escape(request.form['game'])
+        score = html.escape(request.form['score'])
 
         print("here")
 
