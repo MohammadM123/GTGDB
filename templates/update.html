@@ -2,11 +2,11 @@
 <h2>Update guess</h2>
 <form action="/update/{{guess_id}}" method="post">
   <label>Date: </label>
-  <input type="date" name="date" id="date" />
+  <input value="{{guess["date"]}}" type="date" name="date" id="date" />
   <label>Game: </label>
-  <input type="text" name="game" id="game" />
+  <input value="{{guess["game"]}}" type="text" name="game" id="game" />
   <label>Score: </label>
-  <input type="number" name="score" id="score" />
+  <input value="{{guess["score"]}}" type="number" name="score" id="score" />
   <input type="submit" value="Update guess" />
 </form>
 {% endblock %}

@@ -46,6 +46,18 @@ def CheckIfUserExists(username):
     else:
         return False
 
+
+def GetGuess(guess_id):
+    db = GetDB()
+    guess = db.execute("""SELECT Guesses.id, Guesses.date, Guesses.game, Guesses.score, Users.username
+                            FROM Guesses JOIN Users ON Guesses.user_id = Users.id WHERE Guesses.id=?""",
+                       (guess_id,)).fetchone()
+
+    return guess
+
+
+GetGuess(10)
+
 # Main functions
 
 
@@ -71,10 +83,8 @@ def CheckLogin(username, password):
     # Do they exist?
     if user is not None:
         # OK they exist, is their password correct
-        pepper = current_app.config["PEPPER"]
-        salted_password = password + pepper
 
-        if check_password_hash(user['password'], salted_password):
+        if check_password_hash(user['password'], password):
             # They got it right, return their details
             return user
 
@@ -123,11 +133,9 @@ def RegisterUser(username, password):
 
     # Attempt to add them to the database
     db = GetDB()
-    pepper = current_app.config["PEPPER"]
-    salted_password = password + pepper
 
     hash = generate_password_hash(
-        salted_password,
+        password,
         method="pbkdf2:sha256",
         salt_length=16
     )

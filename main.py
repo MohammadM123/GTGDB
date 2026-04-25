@@ -1,14 +1,10 @@
 import html
 from flask import Flask, render_template, request, session, redirect
 import db
-import secrets
 import time
 
 app = Flask(__name__)
 app.secret_key = "gtg"
-
-# Universal pepper for password security
-app.config["PEPPER"] = secrets.token_hex(32)
 
 
 @app.route("/")
@@ -157,7 +153,8 @@ def Update(guess_id):
         # Send to homepage
         return redirect("/")
 
-    return render_template("update.html", guess_id=guess_id)
+    guess_object = db.GetGuess(guess_id)
+    return render_template("update.html", guess_id=guess_id, guess=guess_object)
 
 
 app.run(debug=True, port=5000)
