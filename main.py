@@ -3,6 +3,14 @@ from flask import Flask, render_template, request, session, redirect
 import db
 import time
 
+from datetime import datetime
+
+
+def format_date(date_str):
+    """Helper function for changing format of date"""
+    return datetime.strptime(date_str, "%Y-%m-%d").strftime("%d-%m-%Y")
+
+
 app = Flask(__name__)
 app.secret_key = "gtg"
 
@@ -10,7 +18,17 @@ app.secret_key = "gtg"
 @app.route("/")
 def Home():
     guessData = db.GetAllGuesses()
-    return render_template("index.html", guesses=guessData)
+
+    # Convert date format of guess from YYYY-MM-DD to DD-MM-YYYY
+    formatted_guesses = []
+
+    for guess in guessData:
+        g = dict(guess)
+        g["date"] = datetime.strptime(
+            g["date"], "%Y-%m-%d").strftime("%d-%m-%Y")
+        formatted_guesses.append(g)
+
+    return render_template("index.html", guesses=formatted_guesses)
 
 
 @app.route("/login", methods=["GET", "POST"])
