@@ -132,6 +132,9 @@ def Add():
         # Send the data to add our new guess to the db
         db.AddGuess(user_id, date, game, score)
 
+        # Once guess has been added, return to homepage
+        return redirect("/")
+
     return render_template("add.html")
 
 
