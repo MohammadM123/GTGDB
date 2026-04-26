@@ -181,6 +181,8 @@ def UpdateGuess(guess_id, date, game, score):
 
 
 def DeleteGuess(id):
+    """Delete guess with particular id"""
+
     db = GetDB()
     db.execute("DELETE FROM Guesses WHERE id=?", (id,))
     db.commit()

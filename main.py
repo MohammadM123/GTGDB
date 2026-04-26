@@ -74,19 +74,19 @@ def Register():
         username = html.escape(request.form['username'])
         password = html.escape(request.form['password'])
 
+        # If the either input is not given, throw error
         if (not username) or (not password):
             return render_template("register.html", error="Please provide a username and password")
 
+        # If username is already taken, inform user
         if db.CheckIfUserExists(username):
             return render_template("register.html", error="Username already in use")
 
-        # Try and add them to the DB
+        # Add them to the DB
         new_user = db.RegisterUser(username, password)
 
-        # Try and add them to the DB
+        # If user addition is successful, update session and return to homepage
         if new_user:
-
-            print(new_user)
             # Update for auto login
             session['id'] = new_user['id']
             session['username'] = username
@@ -122,9 +122,11 @@ def Delete():
 
     guess_id = html.escape(request.form["id"])
 
+    # If guess does not belong to user, return to homepage
     if not int(guess_id) in db.GetUserGuesses(session["id"]):
         return redirect("/")
 
+    # If user is not block , delete guess and return to homepage
     db.DeleteGuess(guess_id)
     return redirect("/")
 
@@ -136,6 +138,7 @@ def Update(guess_id):
     if not session.get('username'):
         return redirect("/")
 
+    # If guess does not belong to user, return to homepage
     if not int(guess_id) in db.GetUserGuesses(session["id"]):
         return redirect("/")
 
@@ -145,14 +148,13 @@ def Update(guess_id):
         game = html.escape(request.form['game'])
         score = html.escape(request.form['score'])
 
-        print("here")
-
         # Send the data to add our new guess to the db
         db.UpdateGuess(guess_id, date, game, score)
 
         # Send to homepage
         return redirect("/")
 
+    # If GET request, render HTML page, passing in the guess
     guess_object = db.GetGuess(guess_id)
     return render_template("update.html", guess_id=guess_id, guess=guess_object)
 
