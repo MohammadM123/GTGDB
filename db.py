@@ -93,22 +93,22 @@ def CheckLogin(username, password):
 
 
 def IncrementLoginAttempts(user_id):
-    """Increment failed login attempts for one user and set lock time if failed attempts >= 5"""
+    """Increment login login attempts for one user and set lock time if login attempts >= 5"""
     db = GetDB()
 
     user = db.execute(
-        "SELECT failed_attempts FROM Users WHERE id=?", (user_id,)).fetchone()
-    attempts = user["failed_attempts"] + 1
+        "SELECT login_attempts FROM Users WHERE id=?", (user_id,)).fetchone()
+    attempts = user["login_attempts"] + 1
 
     if attempts >= 5:
         lock_until = int(time.time()) + 300  # 5 minutes
         db.execute(
-            "UPDATE Users SET failed_attempts=0, lock_until=? WHERE id=?",
+            "UPDATE Users SET login_attempts=0, lock_until=? WHERE id=?",
             (lock_until, user_id)
         )
     else:
         db.execute(
-            "UPDATE Users SET failed_attempts=? WHERE id=?",
+            "UPDATE Users SET login_attempts=? WHERE id=?",
             (attempts, user_id)
         )
 
@@ -119,7 +119,7 @@ def ResetLoginAttempts(user_id):
     """Reset failed login attempts and lock time for one user"""
     db = GetDB()
     db.execute(
-        "UPDATE Users SET failed_attempts=0, lock_until=0 WHERE id=?",
+        "UPDATE Users SET login_attempts=0, lock_until=0 WHERE id=?",
         (user_id,)
     )
     db.commit()
